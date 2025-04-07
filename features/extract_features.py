@@ -15,7 +15,7 @@ def extract_all_features(filepath, sr=16000):
     contrast_mean = np.mean(contrast, axis=1)
 
     tonnetz = librosa.feature.tonnetz(y=librosa.effects.harmonic(y), sr=sr)
-    tonnetz_mean = np.mean(axis=1)
+    tonnetz_mean = np.mean(tonnetz, axis=1)
 
     features = np.concatenate([mfcc_mean, chroma_mean, contrast_mean, tonnetz_mean])
     return features
