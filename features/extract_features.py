@@ -2,13 +2,20 @@ import librosa
 import numpy as np
 import os
 
-def extract_mfcc_features(filepath, n_mfcc=20):
-    y, sr = librosa.load(filepath, sr=16000)
-    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=n_mfcc)
-    features = {
-        'mean': np.mean(mfcc, axis=1),
-        'std': np.std(mfcc, axis=1),
-        'min': np.min(mfcc, axis=1),
-        'max': np.max(mfcc, axis=1)
-    }
-    return np.concatenate([features['mean'], features['std'], features['min'], features['max']])
+def extract_all_features(filepath, sr=16000):
+    y, _ = librosa.load(filepath, sr=sr)
+
+    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
+    mfcc_mean = np.mean(mfcc, axis=1)
+
+    chroma = librosa.feature.chroma_stft(y=y, sr=sr)
+    chroma_mean = np.mean(chroma, axis=1)
+
+    contrast = librosa.feature.spectral_contrast(y=y, sr=sr)
+    contrast_mean = np.mean(contrast, axis=1)
+
+    tonnetz = librosa.feature.tonnetz(y=librosa.effects.harmonic(y), sr=sr)
+    tonnetz_mean = np.mean(axis=1)
+
+    features = np.concatenate([mfcc_mean, chroma_mean, contrast_mean, tonnetz_mean])
+    return features
